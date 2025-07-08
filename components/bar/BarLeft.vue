@@ -60,146 +60,148 @@ const rowHeightpx = `${rowHeight}px`;
 
 const route = useRoute();
 
-const openMenu = (MenuOpenEvent) => {
-  const result = navigationList.find((item) => item.title === MenuOpenEvent);
-  let height =
-    result.children.length * rowHeight + menuDivRef.value.clientHeight;
-  for (const item of openMenuList) {
-    if (highlyIsQualified(height)) {
-      break;
-    } else {
-      height =
-        height -
-        navigationList.find((item1) => item1.title === item).children.length *
-          rowHeight;
-      openMenuList.delete(item);
-      menuRef.value.close(item);
-    }
-  }
-  openMenuList.add(MenuOpenEvent);
-};
-const closeMenu = (MenuOpenEvent) => {
-  openMenuList.delete(MenuOpenEvent);
-};
+// const openMenu = (MenuOpenEvent) => {
+//   const result = navigationList.find((item) => item.title === MenuOpenEvent);
+//   let height =
+//     result.children.length * rowHeight + menuDivRef.value.clientHeight;
+//   for (const item of openMenuList) {
+//     if (highlyIsQualified(height)) {
+//       break;
+//     } else {
+//       height =
+//         height -
+//         navigationList.find((item1) => item1.title === item).children.length *
+//           rowHeight;
+//       openMenuList.delete(item);
+//       menuRef.value.close(item);
+//     }
+//   }
+//   openMenuList.add(MenuOpenEvent);
+// };
+// const closeMenu = (MenuOpenEvent) => {
+//   openMenuList.delete(MenuOpenEvent);
+// };
 
-const highlyIsQualified = (height) => {
-  // 在中心内容长度小于window.innerHeight时，回到首页弹窗不可能出来
-  // 此时高度比较参照中心内容长度即可，不需要算上弹窗和底栏
-  // 中心内容长度大于window.innerHeight时，总长度要加上底栏和弹窗和1px的弹窗下边距与window.innerHeight对比
-  if (
-    height + rowHeight * 2 + 1 < window.innerHeight &&
-    height <
-      menuDivRef.value.parentNode.parentNode.nextElementSibling.clientHeight
-  )
-    return true;
-  return false;
-};
+// const highlyIsQualified = (height) => {
+//   // 在中心内容长度小于window.innerHeight时，回到首页弹窗不可能出来
+//   // 此时高度比较参照中心内容长度即可，不需要算上弹窗和底栏
+//   // 中心内容长度大于window.innerHeight时，总长度要加上底栏和弹窗和1px的弹窗下边距与window.innerHeight对比
+//   if (
+//     height + rowHeight * 2 + 1 < window.innerHeight &&
+//     height <  111
+//       // menuDivRef.value.parentNode.parentNode.nextElementSibling.clientHeight
+//   )
+//     return true;
+//   return false;
+// };
 
-const { $mitt } = useNuxtApp();
-onMounted(() => {
-  $mitt.on('routeSwitching', () => {
-    retractMenuBar();
-  });
-});
-onBeforeUnmount(() => {
-  $mitt.off('routeSwitching');
-});
+// const { $mitt } = useNuxtApp();
+// onMounted(() => {
+//   $mitt.on('routeSwitching', () => {
+//     retractMenuBar();
+//   });
+// });
+// onBeforeUnmount(() => {
+//   $mitt.off('routeSwitching');
+// });
 
-const retractMenuBar = () => {
-  let height = menuDivRef.value.clientHeight;
-  for (const item of openMenuList) {
-    if (highlyIsQualified(height)) {
-      break;
-    } else {
-      if (openMenuList.size === 1) break;
-      height =
-        height -
-        navigationList.find((item1) => item1.title === item).children.length *
-          rowHeight;
-      openMenuList.delete(item);
-      menuRef.value.close(item);
-    }
-  }
-};
-onMounted(() => {
-  // 每次缩放改变的时候，判断有没有栏目需要缩回去，先展开的，优先缩进
-  window.onresize = (() => {
-    let timeoutID = undefined;
-    return () => {
-      if (timeoutID !== undefined) clearTimeout(timeoutID);
-      timeoutID = setTimeout(() => {
-        retractMenuBar();
-        timeoutID = undefined;
-      }, 40);
-    };
-  })();
-  let height = menuDivRef.value.clientHeight;
-  // 初次加载的时候尝试打开当前栏目分类
-  // 记一下目前所在分类的title
-  let thisTitle = null;
-  let thisColumnIsShow = false;
-  for (const item of navigationList.values()) {
-    const resule = item.children.find(
-      (item1) => item1.url === route.path.replace(/\/+$/, '')
-    );
-    if (resule) {
-      height = height + item.children.length * rowHeight;
-      if (highlyIsQualified(height)) {
-        // 记下可以展开，但先不展开，因为要给这个放到队列尾
-        thisColumnIsShow = true;
-      }
-      thisTitle = item.title;
-      break;
-    }
-  }
-  // 然后在剩余空间里按顺序遍历栏目，能展开尽量展开
-  for (const item of navigationList) {
-    if (thisTitle !== item.title) {
-      height = height + item.children.length * rowHeight;
-      if (highlyIsQualified(height)) {
-        openMenuList.add(item.title);
-        menuRef.value.open(item.title);
-      } else {
-        break;
-      }
-    }
-  }
-  // 剩余栏目展开完毕，展开当前所在栏目，此时屏幕缩小优先关闭其他栏目
-  if (thisColumnIsShow) {
-    openMenuList.add(thisTitle);
-    menuRef.value.open(thisTitle);
-  }
+// const retractMenuBar = () => {
+//   let height = menuDivRef.value.clientHeight;
+//   for (const item of openMenuList) {
+//     if (highlyIsQualified(height)) {
+//       break;
+//     } else {
+//       if (openMenuList.size === 1) break;
+//       height =
+//         height -
+//         navigationList.find((item1) => item1.title === item).children.length *
+//           rowHeight;
+//       openMenuList.delete(item);
+//       menuRef.value.close(item);
+//     }
+//   }
+// };
+// onMounted(() => {
+//   // 每次缩放改变的时候，判断有没有栏目需要缩回去，先展开的，优先缩进
+//   window.onresize = (() => {
+//     let timeoutID = undefined;
+//     return () => {
+//       if (timeoutID !== undefined) clearTimeout(timeoutID);
+//       timeoutID = setTimeout(() => {
+//         retractMenuBar();
+//         timeoutID = undefined;
+//       }, 40);
+//     };
+//   })();
+//   let height = menuDivRef.value.clientHeight;
+//   // 初次加载的时候尝试打开当前栏目分类
+//   // 记一下目前所在分类的title
+//   let thisTitle = null;
+//   let thisColumnIsShow = false;
+//   for (const item of navigationList.values()) {
+//     const resule = item.children.find(
+//       (item1) => item1.url === route.path.replace(/\/+$/, '')
+//     );
+//     if (resule) {
+//       height = height + item.children.length * rowHeight;
+//       if (highlyIsQualified(height)) {
+//         // 记下可以展开，但先不展开，因为要给这个放到队列尾
+//         thisColumnIsShow = true;
+//       }
+//       thisTitle = item.title;
+//       break;
+//     }
+//   }
+//   // 然后在剩余空间里按顺序遍历栏目，能展开尽量展开
+//   for (const item of navigationList) {
+//     if (thisTitle !== item.title) {
+//       height = height + item.children.length * rowHeight;
+//       if (highlyIsQualified(height)) {
+//         openMenuList.add(item.title);
+//         menuRef.value.open(item.title);
+//       } else {
+//         break;
+//       }
+//     }
+//   }
+//   // 剩余栏目展开完毕，展开当前所在栏目，此时屏幕缩小优先关闭其他栏目
+//   if (thisColumnIsShow) {
+//     openMenuList.add(thisTitle);
+//     menuRef.value.open(thisTitle);
+//   }
 
-  // 判断当前所在位置是否需要回到顶部按钮
-  returnFromTop();
-  // 挂载上面监听器
-  window.addEventListener('scroll', returnFromTop);
-});
+//   // 判断当前所在位置是否需要回到顶部按钮
+//   returnFromTop();
+//   // 挂载上面监听器
+//   window.addEventListener('scroll', returnFromTop);
+// });
 
-const returnFromTop = (() => {
-  let timeoutID = undefined;
-  return () => {
-    if (timeoutID !== undefined) clearTimeout(timeoutID);
-    timeoutID = setTimeout(() => {
-      if ((window.scrollY || document.documentElement.scrollTop) > 103) {
-        backToTopBtnShow.value = true;
-      } else {
-        backToTopBtnShow.value = false;
-      }
-      timeoutID = undefined;
-    }, 20);
-  };
-})();
+// const returnFromTop = (() => {
+//   let timeoutID = undefined;
+//   return () => {
+//     if (timeoutID !== undefined) clearTimeout(timeoutID);
+//     timeoutID = setTimeout(() => {
+//       if ((window.scrollY || document.documentElement.scrollTop) > 103) {
+//         backToTopBtnShow.value = true;
+//       } else {
+//         backToTopBtnShow.value = false;
+//       }
+//       timeoutID = undefined;
+//     }, 20);
+//   };
+// })();
 
-const backToTopBtnShow = ref(false);
+// const backToTopBtnShow = ref(false);
 </script>
 
 <template>
   <div id="sticky-nav" ref="stickyNav">
-    <Transition name="anim-button">
+    <el-button type="primary">111</el-button>
+    <ElDropdown>111</ElDropdown>
+    <!-- <Transition name="anim-button">
       <div
         v-show="backToTopBtnShow"
-        class="flex justify-between text-white leading-8 mb-[1px] to-top-color"
+        class="to-top-color mb-[1px] flex justify-between leading-8 text-white"
         onclick="window.scrollTo({
             top: 0,
             left: 0,
@@ -210,21 +212,28 @@ const backToTopBtnShow = ref(false);
         ></el-icon>
         <span class="mr-4">{{ textValue.span1 }}</span>
       </div>
-    </Transition>
+    </Transition> -->
     <div ref="menuDiv">
       <el-menu
         ref="menu"
         class="my-el-menu"
         @close="closeMenu"
         @open="openMenu">
+        <el-button type="primary">111</el-button>
+        <el-menu>111</el-menu>
+        <el-sub-menu>111</el-sub-menu>
         <el-sub-menu
           v-for="(item, index) in navigationList"
           :key="`barleft-1-link-${index}`"
           :index="item.title">
+          <el-button type="primary">111</el-button>
+          <ElDropdown>111</ElDropdown>
           <template #title>
             <span>{{ item.title }}</span>
+            <el-button type="primary">111</el-button>
+            <ElDropdown>111</ElDropdown>
           </template>
-          <div class="my-item-ul"
+          <!-- <div class="my-item-ul"
             ><AppLink
               v-for="(item2, index2) in item.children"
               :key="`barleft-2-link-${index2}`"
@@ -242,7 +251,7 @@ const backToTopBtnShow = ref(false);
                 >{{ getSpecifiedTitle(item2) }}</el-menu-item
               ></AppLink
             ></div
-          >
+          > -->
         </el-sub-menu>
       </el-menu>
     </div>
@@ -250,7 +259,7 @@ const backToTopBtnShow = ref(false);
 </template>
 
 <style scoped>
-.my-el-menu {
+/* .my-el-menu {
   --el-menu-item-font-size: 12pt;
   --el-menu-bg-color: var(--primary);
   --el-menu-text-color: white;
@@ -261,7 +270,7 @@ const backToTopBtnShow = ref(false);
   --el-menu-base-level-padding: 10px;
   --el-menu-level-padding: 5px;
   border: 0;
-}
+} */
 
 .my-el-menu-item {
   color: black;

@@ -25,8 +25,7 @@ const switchLanguage = async (to) => {
   <div class="bg-cover">
     <div class="flex">
       <div class="grow"></div>
-      <el-button type="primary">111</el-button>
-      <ElDropdown>111</ElDropdown>
+      <el-dropdown>111</el-dropdown>
       <div class="content-container flex justify-end">
         <div
           class="theme-bg-color-primary-static text-white flex justify-end py-[5px] whitespace-nowrap text-clip *:no-underline pl-[50px] pr-[0.5rem]">
