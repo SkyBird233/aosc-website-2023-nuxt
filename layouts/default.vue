@@ -23,13 +23,13 @@ onMounted(() => {
           <div class="content-container myShadow flex">
             <div
               class="sticky top-0 w-[15%] min-w-[12rem] bg-leftbar-bg *:text-nowrap">
-              <BarLeft class="sticky top-0 min-w-[100%] *:text-nowrap" />
+              <!-- <BarLeft class="sticky top-0 min-w-[100%] *:text-nowrap" /> -->
             </div>
-            <slot></slot>
+            <!-- <slot></slot> -->
           </div>
         </div>
       </div>
-      <BarFooter class="fixed bottom-0 h-[2rem]" />
+      <!-- <BarFooter class="fixed bottom-0 h-[2rem]" /> -->
     </div>
   </div>
 </template>

@@ -2,7 +2,7 @@
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineNuxtConfig({
-  extends: '@nuxt-themes/docus',
+  // extends: '@nuxt-themes/docus',
   modules: [
     '@element-plus/nuxt',
     '@pinia/nuxt',
