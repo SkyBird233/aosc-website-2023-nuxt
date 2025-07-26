@@ -1,34 +1,49 @@
 <script lang="ts" setup>
-import type { Collections } from '@nuxt/content';
+import type {
+  CollectionQueryBuilder,
+  Collections,
+  EnCollectionItem,
+  ZhCollectionItem
+} from '@nuxt/content';
 
 const { locale } = useI18n();
 // const textValue = tm('NewsCategoryList');
 
 const props = defineProps<{
   category?: string;
+  filters?: Array<{ key: string; value: string }>;
   limit?: number;
 }>();
 
-const queryNewsCollectionCategory = (
+const queryCollectionCategory = (
   locale: keyof Collections,
   category?: string,
-  limit: number = 0
+  limit: number = 0,
+  filters = props.filters
 ) => {
-  const q = queryCollection(locale)
+  let q = (
+    queryCollection(locale) as CollectionQueryBuilder<
+      ZhCollectionItem | EnCollectionItem
+    >
+  )
     .select('path', 'title', 'date')
-    .where('path', 'LIKE', '/news%')
+    .where('path', 'LIKE', `/${category}%`)
     .order('date', 'DESC')
     .limit(limit);
-  return category
-    ? () => q.where('categories', 'LIKE', `%"${category}"%`).all() // `["category1","category2"]`
-    : () => q.all();
+  if (filters) {
+    for (const filter of filters) {
+      q = q.where(filter.key, 'LIKE', `%"${filter.value}"%`);
+    }
+  }
+  console.log(q)
+  return () => q.all();
 };
 
 const { data, error, status } = await useAsyncData(
   computed(
-    () => `${locale.value}:NewsCategoriesList:${props.category}:${props.limit}`
+    () => `${locale.value}:CategoriesList:${props.category}:${props.limit}`
   ),
-  queryNewsCollectionCategory(locale.value, props.category, props.limit)
+  queryCollectionCategory(locale.value, props.category, props.limit)
 );
 </script>
 
